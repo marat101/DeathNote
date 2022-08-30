@@ -4,12 +4,10 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.marat.deathnotes.databinding.ActivityWriteBinding
-import java.time.LocalDateTime
 
 class WriteActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -22,10 +20,7 @@ class WriteActivity : AppCompatActivity() {
         binding = ActivityWriteBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        vm = ViewModelProvider(
-            this,
-            MainViewModel.MainViewModelFactory(this)
-        ).get(MainViewModel::class.java)
+        vm = ViewModelProvider(this, MainViewModel.MainViewModelFactory(this)).get(MainViewModel::class.java)
 
         val id = intent.getParcelableExtra<Note>("aaaa")
 

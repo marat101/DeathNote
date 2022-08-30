@@ -5,6 +5,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,18 +14,21 @@ import com.marat.deathnotes.databinding.ItemNoteBinding
 class NoteAdapter(
     private val onRemoveItem: (item: Note) -> Unit,
     private val onClick: (item: Note) -> Unit,
-) : ListAdapter<Note, NoteAdapter.NoteHolder>(DiffUtils()) {
+    private val onFavChange: (item: Note) -> Unit
+    ) : ListAdapter<Note, NoteAdapter.NoteHolder>(DiffUtils()) {
 
     class NoteHolder(
         private val binding: ItemNoteBinding,
         private val onClick: (item: Note) -> Unit,
         private val onRemoveItem: (item: Note) -> Unit,
+        private val onFavChange: (item: Note) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Note) = with(binding) {
             titleNote.text = item.noteTitle
             textNote.text = item.noteText
             date.text = item.date
+            favoritesIndicator.isVisible = item.favourite
             cardView.setOnClickListener {
                 onClick(item)
             }
@@ -35,11 +39,13 @@ class NoteAdapter(
         private fun showPopup(view: View, item2: Note) {
             val popup = PopupMenu(view.context, view)
             popup.inflate(R.menu.menu_delete)
-
             popup.setOnMenuItemClickListener { item: MenuItem? ->
                 when (item?.itemId) {
                     R.id.delete -> {
                         onRemoveItem(item2)
+                    }
+                    R.id.fav_btn -> {
+                        onFavChange(item2)
                     }
                 }
                 true
@@ -51,7 +57,7 @@ class NoteAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteHolder {
         val inflater = ItemNoteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return NoteHolder(inflater, onClick, onRemoveItem)
+        return NoteHolder(inflater, onClick, onRemoveItem, onFavChange)
     }
 
     override fun onBindViewHolder(holder: NoteHolder, position: Int) {

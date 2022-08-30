@@ -3,10 +3,7 @@ package com.marat.deathnotes
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -35,7 +32,8 @@ class MainViewModel(
                         noteTitle = title,
                         noteText = text,
                         date = date,
-                        date2 = date2
+                        date2 = date2,
+                        favourite = false
                     )
                 )
             }
@@ -45,6 +43,13 @@ class MainViewModel(
     fun deleteNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
             db.noteDao().delete(note)
+        }
+    }
+
+    fun addDelFav(note: Note) {
+        viewModelScope.launch(Dispatchers.IO) {
+            note.favourite = note.favourite != true
+            db.noteDao().update(note)
         }
     }
 
@@ -58,7 +63,7 @@ class MainViewModel(
         return sorting.sort(note)
     }
 
-    fun sortinName(): String {
+    fun sortingName(): String {
         return when (preferenceStore.getSort()) {
             1 -> "По дате создания"
             2 -> "По заголовку"
@@ -71,13 +76,13 @@ class MainViewModel(
 
     fun sorting(num: Int): Sorting {
         return when (num) {
-            1 -> {
+            Sorting.SORTINGBYDATE.numSort -> {
                 Sorting.SORTINGBYDATE
             }
-            2 -> {
+            Sorting.SORTINGBYTITLE.numSort -> {
                 Sorting.SORTINGBYTITLE
             }
-            3 -> {
+            Sorting.SORTINGBYDATE2.numSort -> {
                 Sorting.SORTINGBYDATE2
             }
             else -> {

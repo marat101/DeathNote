@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.marat.deathnotes.databinding.ActivityMainBinding
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -22,7 +23,8 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private val myAdapter = NoteAdapter(
         onRemoveItem = { removeNote(it) },
-        onClick = { clickOnItem(it) })
+        onClick = { clickOnItem(it) },
+        onFavChange = { addDelFav(it) })
 
     @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.O)
@@ -36,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             MainViewModel.MainViewModelFactory(this)
         ).get(MainViewModel::class.java)
 
-        binding.sort2.text = vm.sortinName()
+        binding.sort2.text = vm.sortingName()
         binding.rcView.adapter = myAdapter
 
         observer = Observer {
@@ -53,7 +55,6 @@ class MainActivity : AppCompatActivity() {
         binding.sort.setOnClickListener {
             binding.updown.setImageResource(R.drawable.ic_up)
             showPopup(binding.sort)
-            vm.allNotes.value
         }
     }
 
@@ -68,6 +69,12 @@ class MainActivity : AppCompatActivity() {
         vm.deleteNote(item)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun addDelFav(note: Note) {
+        vm.addDelFav(note)
+        myAdapter.notifyItemChanged(note.id!!)
+    }
+
     private fun showPopup(view: View) {
         val popup = PopupMenu(view.context, view)
         popup.inflate(R.menu.sorting)
@@ -75,24 +82,22 @@ class MainActivity : AppCompatActivity() {
             when (item?.itemId) {
                 R.id.item1 -> {
                     vm.preferenceStore.saveSort(Sorting.SORTINGBYDATE)
-                    binding.sort2.text = vm.sortinName()
-                    binding.updown.setImageResource(R.drawable.ic_down)
+                    binding.sort2.text = vm.sortingName()
                 }
                 R.id.item2 -> {
                     vm.preferenceStore.saveSort(Sorting.SORTINGBYTITLE)
-                    binding.sort2.text = vm.sortinName()
-                    binding.updown.setImageResource(R.drawable.ic_down)
+                    binding.sort2.text = vm.sortingName()
                 }
                 R.id.item3 -> {
                     vm.preferenceStore.saveSort(Sorting.SORTINGBYDATE2)
-                    binding.sort2.text = vm.sortinName()
-                    binding.updown.setImageResource(R.drawable.ic_down)
+                    binding.sort2.text = vm.sortingName()
                 }
             }
             true
         }
         popup.setOnDismissListener {
             binding.updown.setImageResource(R.drawable.ic_down)
+
         }
         popup.show()
     }

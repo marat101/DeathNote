@@ -13,5 +13,6 @@ data class Note(
     var noteTitle: String,
     var noteText: String,
     val date: String,
-    var date2: String
+    var date2: String,
+    var favourite: Boolean
 ) : Parcelable

@@ -58,10 +58,21 @@
                 app:layout_constraintTop_toBottomOf="@id/date" />
 
             <ImageView
+                android:id="@+id/favorites_indicator"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_drawing_pin"
+                android:layout_marginStart="5dp"
+                android:visibility="invisible"
+                android:rotation="45"
+                app:layout_constraintStart_toEndOf="@id/date"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <ImageView
                 android:id="@+id/removeBtn"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:text="DELETE"
                 android:src="@drawable/ic_edit"
                 android:paddingTop="5dp"
                 android:paddingLeft="15dp"
